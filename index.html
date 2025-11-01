@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Compatibility Divination</title>
+  <style>
+    body {
+      background-color: #d3d3d3;
+      font-family: "Times New Roman", serif;
+      text-align: center;
+      padding-top: 40px;
+      color: black;
+    }
+    h1 {
+      font-size: 28px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+    label {
+      font-size: 18px;
+    }
+    input {
+      font-size: 16px;
+      padding: 5px 10px;
+      width: 200px;
+      margin-top: 8px;
+    }
+    button {
+      font-size: 16px;
+      margin-top: 15px;
+      padding: 6px 20px;
+      background-color: #f0f0f0;
+      border: 1px solid #999;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #e0e0e0;
+    }
+    #result {
+      font-size: 48px;
+      font-weight: bold;
+      margin-top: 30px;
+      color: black;
+    }
+  </style>
+</head>
+<body>
+  <h1>Compatibility Divination</h1>
+
+  <label for="nameInput">name</label><br>
+  <input id="nameInput" type="text" placeholder="ひらがなを入力"><br>
+
+  <button onclick="calculateResult()">result</button>
+
+  <div id="result">--</div>
+
+  <script>
+    function kanaToNumber(ch) {
+      // 小文字を通常形に
+      const smallMap = {'ぁ':'あ','ぃ':'い','ぅ':'う','ぇ':'え','ぉ':'お','ゃ':'や','ゅ':'ゆ','ょ':'よ','ゎ':'わ','ゕ':'か','ゖ':'け'};
+      const base = smallMap[ch] || ch;
+
+      const a段 = "あかさたなはまやらわ";
+      const i段 = "いきしちにひみり";
+      const u段 = "うくすつぬふむゆる";
+      const e段 = "えけせてねへめれ";
+      const o段 = "おこそとのほもよろ";
+
+      if (a段.includes(base)) return 1;
+      if (i段.includes(base)) return 2;
+      if (u段.includes(base)) return 3;
+      if (e段.includes(base)) return 4;
+      if (o段.includes(base)) return 5;
+      return 0;
+    }
+
+    function reduceSequence(seq) {
+      while (seq.length > 2) {
+        let nextSeq = "";
+        for (let i = 0; i < seq.length - 1; i++) {
+          let total = parseInt(seq[i]) + parseInt(seq[i + 1]);
+          if (total >= 10) {
+            total = Math.floor(total / 10) + (total % 10);
+          }
+          nextSeq += total.toString();
+        }
+        seq = nextSeq;
+      }
+      return seq;
+    }
+
+    function calculateResult() {
+      const name = document.getElementById("nameInput").value.trim();
+      const resultDiv = document.getElementById("result");
+
+      if (!name) {
+        resultDiv.textContent = "--";
+        return;
+      }
+
+      let numSeq = "";
+      for (const ch of name) {
+        const n = kanaToNumber(ch);
+        if (n !== 0) numSeq += n.toString();
+      }
+
+      if (!numSeq) {
+        resultDiv.textContent = "--";
+        return;
+      }
+
+      const finalResult = reduceSequence(numSeq);
+      resultDiv.textContent = finalResult;
+    }
+  </script>
+</body>
+</html>
